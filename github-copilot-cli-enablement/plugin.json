@@ -1,0 +1,13 @@
+{
+  "name": "github-copilot-cli-enablement",
+  "description": "Reusable onboarding guidance, workflows, prompts, and guardrails for developers using GitHub Copilot CLI in an organization.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "github-copilot",
+    "copilot-cli",
+    "developer-enablement",
+    "onboarding"
+  ],
+  "skills": "skills/"
+}
