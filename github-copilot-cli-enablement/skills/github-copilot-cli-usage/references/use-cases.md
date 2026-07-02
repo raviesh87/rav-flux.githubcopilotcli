@@ -10,6 +10,8 @@
 6. Trust the directory only if the user is allowed to share this code context with Copilot.
 7. Ask: `Give me an overview of this project.`
 8. Run `/help`, then `/skills list` if skills are installed.
+9. Use `/model` if the user needs to select a different available model.
+10. Use `/feedback` to submit feedback from the CLI.
 
 ## Daily Development Prompts
 
@@ -33,12 +35,13 @@
 ## Enterprise Rollout Checklist
 
 1. Verify licensing and Copilot CLI policy at organization or enterprise level.
-2. Choose the supported install path: WinGet for managed Windows devices, npm where Node.js 22+ is already approved, or Homebrew for macOS/Linux.
+2. Choose the supported install path: WinGet for managed Windows devices, npm where Node.js 22+ is already approved, Homebrew with `brew install copilot-cli`, or the macOS/Linux install script.
 3. Confirm corporate proxy, firewall, and certificate requirements with the desktop engineering team.
 4. Publish a short internal usage policy covering source code, secrets, regulated data, tool approval, and production deployments.
 5. Add repository instructions in `.github/copilot-instructions.md` for build, test, lint, style, branch, and PR rules.
-6. Provide a starter prompt pack and a short live demo: explore, plan, edit, test, review, PR.
-7. Pilot with a small group, collect examples, then publish the plugin or skills through a marketplace repository.
+6. Decide whether prerelease installs, PAT authentication, experimental mode, Autopilot mode, and custom LSP servers are allowed.
+7. Provide a starter prompt pack and a short live demo: explore, plan, choose model, edit, test, review, PR.
+8. Pilot with a small group, collect examples, then publish the plugin or skills through a marketplace repository.
 
 ## Tool Approval Guidance
 
@@ -83,8 +86,10 @@ Marketplace:
 - `copilot` not found: restart the terminal, check PATH, or reinstall with the chosen package manager.
 - npm install fails: verify Node.js 22 or later and npm registry access.
 - Windows launch fails: verify PowerShell v6 or higher.
+- Homebrew command fails: use `brew install copilot-cli`, not the cask syntax.
 - Authentication loops: run `copilot login` again, check the browser account, and unset unintended `COPILOT_GITHUB_TOKEN`, `GH_TOKEN`, or `GITHUB_TOKEN` values.
 - Access denied after login: ask the GitHub organization owner or enterprise admin to verify Copilot CLI policy.
+- LSP status is missing: install the language server separately, add `~/.copilot/lsp-config.json` or `.github/lsp.json`, then run `/lsp`.
 - The CLI ignores a new skill: run `/skills reload`, verify the folder contains `SKILL.md`, and check `/skills info SKILL-NAME`.
 - Plugin changes do not appear: rerun `copilot plugin install ./github-copilot-cli-enablement` because plugin content is cached.
 - Users ask about `gh copilot`: explain that current GitHub docs center on standalone `copilot`; only use the old `gh copilot` extension if the organization explicitly maintains it.

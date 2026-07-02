@@ -17,7 +17,7 @@ If you can use Copilot in an IDE but `copilot` says access is disabled, ask a Gi
 
 ## 2. Install Copilot CLI
 
-Choose the path your organization supports. Managed Windows devices usually use WinGet. Managed macOS devices usually use Homebrew, Self Service, Jamf, Intune, or another endpoint software catalog. The npm path works on all platforms when Node.js 22 or later is approved.
+Choose the path your organization supports. Managed Windows devices usually use WinGet. Managed macOS devices usually use Homebrew, Self Service, Jamf, Intune, or another endpoint software catalog. The npm path works on macOS, Linux, and Windows when Node.js 22 or later is approved.
 
 ### Windows
 
@@ -37,6 +37,12 @@ Install:
 
 ```powershell
 winget install GitHub.Copilot
+```
+
+Install the prerelease channel only when your organization explicitly wants it:
+
+```powershell
+winget install GitHub.Copilot.Prerelease
 ```
 
 Update later:
@@ -79,13 +85,19 @@ brew --version
 Install:
 
 ```bash
-brew install --cask copilot-cli
+brew install copilot-cli
+```
+
+Install the prerelease channel only when your organization explicitly wants it:
+
+```bash
+brew install copilot-cli@prerelease
 ```
 
 Update later:
 
 ```bash
-brew upgrade --cask copilot-cli
+brew upgrade copilot-cli
 ```
 
 If your organization does not allow Homebrew but allows npm, verify Node.js 22 or later and install:
@@ -106,12 +118,30 @@ which copilot
 
 If `copilot` is not found, open a new Terminal window and verify your shell profile includes the Homebrew or npm binary path. On Apple Silicon Macs, Homebrew commonly uses `/opt/homebrew/bin`; on Intel Macs, it commonly uses `/usr/local/bin`.
 
-### Linux
-
-Use Homebrew or npm, depending on your organization's approved package manager:
+Alternative install script for macOS when approved by your organization:
 
 ```bash
-brew install --cask copilot-cli
+curl -fsSL https://gh.io/copilot-install | bash
+```
+
+or:
+
+```bash
+wget -qO- https://gh.io/copilot-install | bash
+```
+
+Use `| sudo bash` only when your organization allows installing to `/usr/local/bin` as root. Set `PREFIX` to install to a custom directory, and set `VERSION` to install a specific release:
+
+```bash
+curl -fsSL https://gh.io/copilot-install | VERSION="v0.0.369" PREFIX="$HOME/custom" bash
+```
+
+### Linux
+
+Use Homebrew, npm, or the install script, depending on your organization's approved package manager:
+
+```bash
+brew install copilot-cli
 ```
 
 or:
@@ -120,6 +150,12 @@ or:
 node --version
 npm --version
 npm install -g @github/copilot
+```
+
+or:
+
+```bash
+curl -fsSL https://gh.io/copilot-install | bash
 ```
 
 Verify:
@@ -145,7 +181,9 @@ copilot login --host HOSTNAME
 
 You can also start the CLI with `copilot`, then type `/login`. The device flow will show a one-time code and open your browser.
 
-Environment token note: `COPILOT_GITHUB_TOKEN`, `GH_TOKEN`, and `GITHUB_TOKEN` can override stored login credentials. If authentication behaves oddly, check whether one of those variables is set for another tool.
+Personal access token option: create a fine-grained personal access token with the `Copilot Requests` permission, then set it through `GH_TOKEN` or `GITHUB_TOKEN`. The quickstart lists `GH_TOKEN` before `GITHUB_TOKEN` for precedence.
+
+Environment token note: token variables can override stored login credentials. If authentication behaves oddly, check whether `GH_TOKEN` or `GITHUB_TOKEN` is set for another tool.
 
 ## 4. First Session
 
@@ -173,15 +211,28 @@ Try:
 Give me an overview of this project.
 ```
 
+On first launch, Copilot CLI displays its startup banner. To show the banner again later:
+
+```powershell
+copilot --banner
+```
+
 Useful interactive controls:
 
 - `Shift+Tab`: cycle into or out of plan mode.
 - `@relative/path`: include a specific file in context.
 - `/help`: show available slash commands.
+- `/login`: authenticate if not already logged in.
+- `/model`: choose from available models.
+- `/experimental`: enable or manage experimental mode.
+- `/lsp`: check configured Language Server Protocol servers.
+- `/feedback`: submit feedback from the CLI.
 - `?`: show tabbed help.
 - `Esc`: cancel the current operation.
 - `Ctrl+C`: cancel, clear input, or exit depending on state.
 - `Ctrl+L`: clear the screen.
+
+The quickstart says Copilot CLI uses Claude Sonnet 4.5 by default and allows users to choose other available models, including Claude Sonnet 4 and GPT-5, with `/model`.
 
 ## 5. Recommended Daily Workflow
 
@@ -332,7 +383,74 @@ After editing a local plugin, reinstall it because Copilot CLI caches installed 
 copilot plugin install ./github-copilot-cli-enablement
 ```
 
-## 9. Publishing For All Users
+## 9. Models, Experimental Mode, And LSP
+
+Model selection:
+
+```text
+/model
+```
+
+Use this when a task benefits from a different available model, or when your organization directs users to a specific model.
+
+Experimental mode:
+
+```powershell
+copilot --experimental
+```
+
+Inside the CLI:
+
+```text
+/experimental
+```
+
+The quickstart says this setting persists in your config once enabled. One experimental feature listed there is Autopilot mode, which users can reach by cycling modes with `Shift+Tab`. Treat experimental behavior as opt-in and potentially changing.
+
+Language Server Protocol support gives Copilot CLI more code intelligence, but the CLI does not bundle language servers. Install language servers separately.
+
+TypeScript example:
+
+```powershell
+npm install -g typescript-language-server
+```
+
+User-level LSP configuration:
+
+```text
+~/.copilot/lsp-config.json
+```
+
+Repository-level LSP configuration:
+
+```text
+.github/lsp.json
+```
+
+Example `.github/lsp.json`:
+
+```json
+{
+  "lspServers": {
+    "typescript": {
+      "command": "typescript-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".ts": "typescript",
+        ".tsx": "typescript"
+      }
+    }
+  }
+}
+```
+
+Check LSP status in an interactive session:
+
+```text
+/lsp
+```
+
+## 10. Publishing For All Users
 
 To share this as an internal plugin marketplace:
 
@@ -358,7 +476,7 @@ For a local/shared filesystem marketplace, users can add the local path that con
 copilot plugin marketplace add C:\path\to\marketplace-repo
 ```
 
-## 10. Admin Rollout Checklist
+## 11. Admin Rollout Checklist
 
 - Confirm Copilot licenses are assigned.
 - Enable Copilot CLI policy at org or enterprise level.
@@ -366,10 +484,12 @@ copilot plugin marketplace add C:\path\to\marketplace-repo
 - Confirm proxy, firewall, and certificate requirements.
 - Publish guidance on source code, secrets, regulated data, and production deployments.
 - Add `.github/copilot-instructions.md` to important repos with build/test/lint commands and coding standards.
+- Decide whether prerelease, experimental mode, PAT auth, and user-installed LSP servers are allowed.
+- Remind users that each prompt may consume premium request quota under their Copilot plan.
 - Publish this plugin marketplace or copy the skill to `.github/skills`.
 - Run a pilot with a small group and capture examples that work well for your codebase.
 
-## 11. Troubleshooting
+## 12. Troubleshooting
 
 `copilot` command not found:
 
@@ -407,6 +527,12 @@ Old `gh copilot` examples do not work:
 
 - Use the standalone `copilot` command. Only use `gh copilot` if your organization still documents and supports that older extension.
 
+Missing LSP intelligence:
+
+- Install the correct language server separately.
+- Add user-level config in `~/.copilot/lsp-config.json` or repo-level config in `.github/lsp.json`.
+- Run `/lsp` inside Copilot CLI.
+
 ## Sources
 
 - GitHub Docs, Getting started with GitHub Copilot CLI: https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-getting-started
@@ -418,3 +544,4 @@ Old `gh copilot` examples do not work:
 - GitHub Docs, Creating a plugin for GitHub Copilot CLI: https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-creating
 - GitHub Docs, Creating a plugin marketplace for GitHub Copilot CLI: https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-marketplace
 - GitHub Docs, GitHub Copilot CLI plugin reference: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference
+- GitHub Copilot CLI quickstart repository: https://gh.io/copilot-cli-quickstart

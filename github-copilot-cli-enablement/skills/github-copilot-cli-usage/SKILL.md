@@ -18,7 +18,8 @@ Prefer the standalone `copilot` CLI. Do not default to the older `gh copilot sug
 2. Choose one install method:
    - Windows: `winget install GitHub.Copilot`
    - Cross-platform npm, requiring Node.js 22 or later: `npm install -g @github/copilot`
-   - macOS/Linux Homebrew: `brew install --cask copilot-cli`
+   - macOS/Linux Homebrew: `brew install copilot-cli`
+   - macOS/Linux install script, when approved: `curl -fsSL https://gh.io/copilot-install | bash`
 3. Verify installation with `copilot --version` and `copilot help`.
 4. Authenticate with `copilot login`, or start `copilot` and run `/login`.
 5. Start in a trusted project directory with `copilot`, confirm the directory trust prompt only for code the user is allowed to share with an AI tool, and ask an initial question such as `Give me an overview of this project.`
@@ -31,6 +32,9 @@ Prefer the standalone `copilot` CLI. Do not default to the older `gh copilot sug
 - Treat tool approvals carefully. Allow read-only and known safe commands more freely; be cautious with install, delete, credential, network, publish, deploy, and push commands.
 - Avoid suggesting `--allow-all-tools` for normal users. Prefer targeted approvals such as `--allow-tool='shell(git:*)'` or session-by-session approval.
 - Use `/review` before committing significant changes.
+- Use `/model` when the user needs to choose among available models.
+- Use `/experimental` or `copilot --experimental` only when the user explicitly wants opt-in experimental behavior such as Autopilot mode.
+- Use `/lsp` and a user-level `~/.copilot/lsp-config.json` or repo-level `.github/lsp.json` when code intelligence needs installed language servers.
 - Use `copilot -p "PROMPT"` for one-off command-line prompts, and `copilot -sp "PROMPT"` when scripting and only the answer should be printed.
 
 ## Resource Map

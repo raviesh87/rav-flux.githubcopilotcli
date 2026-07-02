@@ -2,6 +2,8 @@
 
 Reusable onboarding guidance, workflows, prompt examples, and guardrails for organization users of the standalone GitHub Copilot CLI.
 
+Aligned with the GitHub Copilot CLI quickstart at https://gh.io/copilot-cli-quickstart.
+
 Start with the full guide:
 
 - `github-copilot-cli-enablement/docs/github-copilot-cli-guide.md`
